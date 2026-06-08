@@ -1,0 +1,880 @@
+/* ============================================================
+   SIGNAL MAGAZINE — style.css
+   
+   FILE MAP (read top to bottom):
+   1. CSS Variables (design tokens — dark mode defaults)
+   2. :has() Light Mode Override
+   3. Base Reset & Body
+   4. NAV — sticky navigation
+   5. HERO — full-width masthead
+   6. PAGE GRID — CSS Grid: sidebar | articles | ad column
+   7. SIDEBAR — left column
+   8. ARTICLE CARDS — featured, secondary, small
+   9. AD COLUMN — right column
+   10. FOOTER
+   11. RESPONSIVE — tablet (768px) and mobile (480px)
+   ============================================================ */
+
+
+/* ============================================================
+   1. CSS VARIABLES — Dark Mode (default)
+   
+   Think of variables like named paint cans.
+   --color-bg = the wall color. Change it in one place,
+   it updates everywhere that uses var(--color-bg).
+   ============================================================ */
+:root {
+  /* COLOURS */
+  --color-bg:         #0e0e0e;
+  --color-surface:    #161616;
+  --color-surface-2:  #1e1e1e;
+  --color-border:     #2a2a2a;
+  --color-text:       #f0ede6;
+  --color-text-muted: #888880;
+  --color-text-faint: #444;
+  --color-accent:     #e8c84a;       /* Gold — the magazine's signature colour */
+  --color-accent-2:   #d44f2e;       /* Red-orange — used for kickers + tags */
+  --color-link:       #f0ede6;
+
+  /* IMAGE PLACEHOLDER COLOURS (no real images needed) */
+  --color-img-featured: #1a1a2e;
+  --color-img-blue:     #0d1b2a;
+  --color-img-amber:    #1c1400;
+
+  /* TYPOGRAPHY SCALE */
+  --font-display:  'Playfair Display', Georgia, serif;
+  --font-body:     'Barlow', system-ui, sans-serif;
+  --font-condensed:'Barlow Condensed', sans-serif;
+  --font-mono:     'Space Mono', monospace;
+
+  /* SPACING */
+  --gap:    20px;
+  --radius: 4px;
+
+  /* NAV HEIGHT — used to offset sticky positioning */
+  --nav-h: 56px;
+}
+
+
+/* ============================================================
+   2. :has() LIGHT MODE OVERRIDE
+   
+   :has() lets a parent "see" what's inside it.
+   When the hidden #theme-toggle checkbox is checked,
+   the body "has" a checked input → we switch ALL variables.
+   This is the CSS-only dark/light toggle trick.
+   Zero JavaScript.
+   ============================================================ */
+body:has(#theme-toggle:checked) {
+  --color-bg:         #f5f2eb;
+  --color-surface:    #ffffff;
+  --color-surface-2:  #ede9e0;
+  --color-border:     #d0ccc0;
+  --color-text:       #1a1a1a;
+  --color-text-muted: #666;
+  --color-text-faint: #bbb;
+  --color-accent:     #c9a000;
+  --color-accent-2:   #c43a1a;
+  --color-link:       #1a1a1a;
+  --color-img-featured: #c4d4e8;
+  --color-img-blue:     #bed0e4;
+  --color-img-amber:    #f0dfa0;
+}
+
+/* Hide the dark icon in light mode, show light icon */
+body:has(#theme-toggle:checked) .nav__theme-icon--dark  { display: none; }
+body:has(#theme-toggle:checked) .nav__theme-icon--light { display: inline; }
+.nav__theme-icon--light { display: none; }   /* Hidden by default (dark mode) */
+
+
+/* ============================================================
+   3. BASE RESET & BODY
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.6;
+  /* Smooth transition when theme switches */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+ul, ol { list-style: none; }
+
+img { display: block; width: 100%; }
+
+
+/* ============================================================
+   4. NAV — Sticky navigation bar
+   
+   position: sticky = "scroll with the page UNTIL you hit the top,
+   then lock there". Unlike position: fixed, it doesn't overlap content —
+   it stays in flow until it sticks.
+   ============================================================ */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;           /* Sits above all other content */
+  height: var(--nav-h);
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color 0.3s ease;
+
+  /* Frosted glass effect — makes content behind it slightly visible */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav__inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  height: 100%;
+  padding: 0 24px;
+
+  /* Flexbox: three zones — left | center | right */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav__logo {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--color-text);
+  letter-spacing: -0.03em;
+  /* The logo sits in the center because of space-between + it's the middle child */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);  /* Perfect center trick */
+}
+
+.nav__issue {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  letter-spacing: 0.05em;
+}
+
+.nav__right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav__links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav__links a {
+  font-family: var(--font-condensed);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.nav__links a:hover {
+  color: var(--color-accent);
+}
+
+.nav__theme-btn {
+  cursor: pointer;
+  font-size: 1.4rem;
+  color: var(--color-text-muted);
+  line-height: 1;
+  transition: color 0.2s ease, transform 0.3s ease;
+  user-select: none;
+}
+
+.nav__theme-btn:hover {
+  color: var(--color-accent);
+  transform: rotate(180deg);
+}
+
+
+/* ============================================================
+   5. HERO — Full-width masthead
+   ============================================================ */
+.hero {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 80px 24px 60px;
+  border-bottom: 1px solid var(--color-border);
+
+  /* CSS Grid: title on left, rest on right */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "kicker    kicker"
+    "title     subtitle"
+    "title     meta"
+    ".         scroll";
+  gap: 0 60px;
+  align-items: start;
+}
+
+.hero__kicker {
+  grid-area: kicker;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent-2);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero__kicker::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 2px;
+  background: var(--color-accent-2);
+}
+
+.hero__title {
+  grid-area: title;
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 7vw, 7rem);  /* Fluid: grows with viewport */
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--color-text);
+}
+
+.hero__title em {
+  font-style: italic;
+  color: var(--color-accent);
+}
+
+.hero__subtitle {
+  grid-area: subtitle;
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  max-width: 480px;
+  padding-top: 8px;
+}
+
+.hero__meta {
+  grid-area: meta;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+.hero__author { color: var(--color-accent); }
+
+.hero__scroll-hint {
+  grid-area: scroll;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-text-faint);
+  letter-spacing: 0.1em;
+  margin-top: 48px;
+
+  /* Subtle bobbing animation */
+  animation: bob 2s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+
+
+/* ============================================================
+   6. PAGE GRID — CSS Grid: 3-column layout
+   
+   Think of this like a newspaper spread:
+   [sidebar 240px]  [articles, takes rest of space]  [ad col 200px]
+   
+   grid-template-columns: defines the 3 column widths.
+   gap: the gutter between columns (like margins in print).
+   ============================================================ */
+.page-grid {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+
+  display: grid;
+  grid-template-columns: 240px 1fr 200px;
+  grid-template-areas: "sidebar articles adcol";
+  gap: var(--gap);
+  align-items: start;
+}
+
+.sidebar    { grid-area: sidebar; }
+.articles   { grid-area: articles; }
+.ad-column  { grid-area: adcol; }
+
+
+/* ============================================================
+   7. SIDEBAR
+   ============================================================ */
+.sidebar {
+  position: sticky;          /* Sidebar locks while articles scroll */
+  top: calc(var(--nav-h) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.sidebar__section {
+  border-top: 2px solid var(--color-border);
+  padding-top: 16px;
+}
+
+/* First section gets the accent colour top border */
+.sidebar__section:first-child {
+  border-top-color: var(--color-accent);
+}
+
+.sidebar__heading {
+  font-family: var(--font-condensed);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+/* TRENDING LIST */
+.sidebar__trending {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar__trending-item {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.sidebar__rank {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--color-accent);
+  flex-shrink: 0;
+  min-width: 20px;
+}
+
+.sidebar__trending-link {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--color-text);
+  transition: color 0.2s ease;
+}
+
+.sidebar__trending-link:hover {
+  color: var(--color-accent);
+}
+
+/* TAGS */
+.sidebar__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  font-family: var(--font-condensed);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-text-muted);
+  transition: all 0.2s ease;
+}
+
+.tag:hover {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #000;
+}
+
+/* PULL QUOTE */
+.sidebar__note {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.sidebar__cite {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--color-text-muted);
+  font-style: normal;
+}
+
+
+/* ============================================================
+   8. ARTICLE CARDS
+   
+   Three types:
+   - card--featured : full-width, image + text side by side
+   - card--secondary: half-width, image on top
+   - card--small    : text-only, minimal
+   
+   The .articles column uses Flexbox (column direction)
+   to stack these in order, with .cards-row using row direction.
+   ============================================================ */
+.articles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* ── CARD BASE ── */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+/* Hover effect: card lifts up slightly */
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  border-color: var(--color-accent);
+}
+
+/* ── FEATURED CARD ── */
+.card--featured {
+  display: grid;
+  grid-template-columns: 1fr 1fr;   /* Image left, text right */
+}
+
+.card__image--featured {
+  position: relative;
+  min-height: 280px;
+  background: var(--color-img-featured);
+  overflow: hidden;
+}
+
+/* CSS-generated background pattern (no real images) */
+.card__image-inner {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 60%, rgba(232, 200, 74, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(212, 79, 46, 0.12) 0%, transparent 50%),
+    linear-gradient(160deg, #1a1a2e 0%, #0d0d1a 100%);
+}
+
+/* Grid lines on the image — editorial aesthetic */
+.card__image-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.card__category {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  font-family: var(--font-condensed);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: var(--color-accent);
+  color: #000;
+  border-radius: 2px;
+}
+
+/* ── SECONDARY IMAGE (coloured placeholder) ── */
+.card__image--secondary {
+  height: 160px;
+}
+
+.card__image--blue {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(100, 180, 255, 0.2) 0%, transparent 70%),
+    linear-gradient(135deg, var(--color-img-blue) 0%, #0a1628 100%);
+}
+
+.card__image--amber {
+  background:
+    radial-gradient(circle at 30% 70%, rgba(240, 180, 60, 0.25) 0%, transparent 60%),
+    linear-gradient(135deg, var(--color-img-amber) 0%, #100c00 100%);
+}
+
+/* ── CARD BODY ── */
+.card__body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;   /* Vertically center in featured card */
+}
+
+.card__kicker {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--color-accent-2);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.card__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+/* Featured card gets a bigger title */
+.card--featured .card__title { font-size: 1.5rem; }
+.card--secondary .card__title { font-size: 1.1rem; }
+.card--small .card__title { font-size: 0.95rem; }
+
+.card__excerpt {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+/* Small cards hide the excerpt */
+.card--small .card__excerpt { display: none; }
+
+.card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border);
+}
+
+.card__author {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--color-text-muted);
+}
+
+.card__link {
+  font-family: var(--font-condensed);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+  transition: letter-spacing 0.2s ease;
+}
+
+.card__link:hover { letter-spacing: 0.15em; }
+
+/* ── CARD ROWS (Flexbox) ── */
+.cards-row {
+  display: flex;
+  gap: var(--gap);
+}
+
+/* Each card in a 2-card row takes equal space */
+.cards-row .card {
+  flex: 1;
+  min-width: 0;   /* Prevents flex children from overflowing */
+}
+
+/* 3-card row */
+.cards-row--three .card {
+  flex: 1;
+}
+
+/* Small cards are horizontal: text only, no image */
+.card--small {
+  display: flex;
+  align-items: stretch;
+}
+
+.card--small .card__body {
+  justify-content: space-between;
+  padding: 16px 20px;
+  gap: 12px;
+}
+
+
+/* ============================================================
+   9. AD COLUMN
+   ============================================================ */
+.ad-column {
+  position: sticky;
+  top: calc(var(--nav-h) + 20px);   /* Locks below sticky nav */
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.ad-card {
+  border-radius: var(--radius);
+  padding: 20px;
+  border: 1px solid var(--color-border);
+}
+
+.ad-card--newsletter {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #000;
+}
+
+.ad-card--promo {
+  background: var(--color-surface-2);
+}
+
+.ad-card--quote {
+  background: transparent;
+  border-style: dashed;
+}
+
+.ad-card__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 8px;
+}
+
+.ad-card--newsletter .ad-card__eyebrow { color: #000; }
+
+.ad-card__title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1.0;
+  margin-bottom: 10px;
+}
+
+.ad-card--newsletter .ad-card__title { color: #000; }
+
+.ad-card__body {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+
+.ad-card--newsletter .ad-card__body { color: rgba(0,0,0,0.65); }
+
+.ad-card__btn {
+  display: inline-block;
+  font-family: var(--font-condensed);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  background: #000;
+  color: var(--color-accent);
+  border-radius: 2px;
+  transition: opacity 0.2s ease;
+}
+
+.ad-card--promo .ad-card__btn {
+  background: var(--color-accent);
+  color: #000;
+}
+
+.ad-card__btn:hover { opacity: 0.8; }
+
+.ad-card__quote {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.ad-card__cite {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--color-text-faint);
+  font-style: normal;
+}
+
+
+/* ============================================================
+   10. FOOTER
+   ============================================================ */
+.footer {
+  border-top: 1px solid var(--color-border);
+  padding: 24px;
+}
+
+.footer__inner {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer__logo {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.footer__copy {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+}
+
+.footer__links {
+  display: flex;
+  gap: 16px;
+}
+
+.footer__links a {
+  font-family: var(--font-condensed);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color 0.2s ease;
+}
+
+.footer__links a:hover { color: var(--color-accent); }
+
+
+/* ============================================================
+   11. RESPONSIVE — Mobile-first breakpoints
+   
+   We designed for desktop first (1440px), then scale DOWN.
+   Two breakpoints:
+   - 900px: tablet — collapse 3 columns to 2
+   - 600px: mobile — stack everything single column
+   ============================================================ */
+
+/* ── TABLET (max-width: 900px) ── */
+@media (max-width: 900px) {
+
+  /* Collapse 3-column grid to 2 columns: sidebar | articles */
+  .page-grid {
+    grid-template-columns: 200px 1fr;
+    grid-template-areas:
+      "sidebar  articles"
+      "adcol    adcol";
+  }
+
+  /* Ad column goes full-width below */
+  .ad-column {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .ad-card { flex: 1; min-width: 180px; }
+
+  /* Hero becomes single column */
+  .hero {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "kicker"
+      "title"
+      "subtitle"
+      "meta"
+      "scroll";
+  }
+
+  /* Nav links collapse */
+  .nav__links li:nth-child(n+3) { display: none; }
+}
+
+/* ── MOBILE (max-width: 600px) ── */
+@media (max-width: 600px) {
+
+  /* Everything stacks single column */
+  .page-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "articles"
+      "sidebar"
+      "adcol";
+    padding: 20px 16px;
+  }
+
+  /* Sidebar no longer sticky on mobile */
+  .sidebar {
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .sidebar__section { flex: 1; min-width: 140px; }
+
+  /* Cards all stack vertically */
+  .cards-row, .cards-row--three {
+    flex-direction: column;
+  }
+
+  /* Featured card: image on top, text below */
+  .card--featured {
+    grid-template-columns: 1fr;
+  }
+
+  .card__image--featured { min-height: 200px; }
+
+  /* Hide some nav items on mobile */
+  .nav__links { display: none; }
+  .nav__issue { display: none; }
+
+  /* Smaller hero title */
+  .hero {
+    padding: 40px 16px 32px;
+  }
+}
+
+/* ── VERY NARROW (max-width: 380px) ── */
+@media (max-width: 380px) {
+  .hero__title {
+    font-size: 3rem;
+  }
+}
