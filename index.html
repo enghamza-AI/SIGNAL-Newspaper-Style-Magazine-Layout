@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIGNAL — Tech Culture Magazine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@600;700&family=Space+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<!--
+  SECTION 1: <body> uses the :has() trick for dark/light mode.
+  The hidden checkbox #theme-toggle controls the whole page theme via CSS.
+  No JavaScript needed — pure CSS state management.
+-->
+<body>
+
+  <!-- ░░ THEME TOGGLE (hidden checkbox — CSS-only dark/light mode) ░░ -->
+  <!--
+    This checkbox has no visible UI itself.
+    The <label> in the nav is what the user actually clicks.
+    When checked, CSS detects body:has(#theme-toggle:checked) and switches all variables.
+  -->
+  <input type="checkbox" id="theme-toggle" hidden />
+
+  <!-- ░░ SECTION 1: NAV ░░ -->
+  <!--
+    <nav> is a semantic HTML5 element. It tells browsers + screen readers
+    "this is the site navigation", not just a random div.
+    position: sticky makes it lock to the top as you scroll.
+  -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+
+      <div class="nav__left">
+        <span class="nav__issue">Issue 47 · June 2026</span>
+      </div>
+
+      <a href="#" class="nav__logo" aria-label="Signal Magazine home">
+        SIGNAL
+      </a>
+
+      <div class="nav__right">
+        <!-- The <label> ties to #theme-toggle via for="theme-toggle" -->
+        <!-- Clicking this label flips the checkbox — no JS needed -->
+        <label for="theme-toggle" class="nav__theme-btn" aria-label="Toggle dark/light mode">
+          <span class="nav__theme-icon nav__theme-icon--dark">◐</span>
+          <span class="nav__theme-icon nav__theme-icon--light">◑</span>
+        </label>
+
+        <ul class="nav__links" role="list">
+          <li><a href="#">Tech</a></li>
+          <li><a href="#">Culture</a></li>
+          <li><a href="#">Future</a></li>
+          <li><a href="#">Subscribe</a></li>
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+
+  <!-- ░░ SECTION 2: HERO BANNER ░░ -->
+  <!--
+    <header> marks the top content area of the page.
+    Not the same as <nav> — this is the "masthead" of the magazine.
+  -->
+  <header class="hero">
+    <div class="hero__kicker">Editor's Pick · AI & Society</div>
+    <h1 class="hero__title">
+      The Quiet<br />
+      <em>Revolution</em><br />
+      Nobody<br />
+      Noticed
+    </h1>
+    <p class="hero__subtitle">
+      How ambient intelligence rewired human attention before anyone thought to ask permission — and why Silicon Valley is finally nervous.
+    </p>
+    <div class="hero__meta">
+      <span class="hero__author">By Lena Vasquez</span>
+      <span class="hero__divider">·</span>
+      <span class="hero__read-time">12 min read</span>
+    </div>
+    <div class="hero__scroll-hint" aria-hidden="true">↓ scroll</div>
+  </header>
+
+  <!-- ░░ SECTION 3: MAIN GRID (sidebar + content + ad column) ░░ -->
+  <!--
+    <main> = the primary content. There should be only ONE per page.
+    Inside, CSS Grid splits it into 3 columns:
+      [sidebar] [articles] [ad column]
+    The grid is defined in style.css as .page-grid
+  -->
+  <main class="page-grid" id="main-content">
+
+    <!-- ── LEFT SIDEBAR ── -->
+    <!--
+      <aside> = content related to but not essential to the main content.
+      Think of it as the magazine's left margin: trending topics, tags, etc.
+    -->
+    <aside class="sidebar" aria-label="Sidebar">
+
+      <section class="sidebar__section">
+        <h2 class="sidebar__heading">Trending</h2>
+        <ol class="sidebar__trending" role="list">
+          <li class="sidebar__trending-item">
+            <span class="sidebar__rank">01</span>
+            <a href="#" class="sidebar__trending-link">GPT-5 and the end of search engines</a>
+          </li>
+          <li class="sidebar__trending-item">
+            <span class="sidebar__rank">02</span>
+            <a href="#" class="sidebar__trending-link">Open-source models hit parity</a>
+          </li>
+          <li class="sidebar__trending-item">
+            <span class="sidebar__rank">03</span>
+            <a href="#" class="sidebar__trending-link">The chip wars: TSMC vs Intel</a>
+          </li>
+          <li class="sidebar__trending-item">
+            <span class="sidebar__rank">04</span>
+            <a href="#" class="sidebar__trending-link">Developer burnout epidemic</a>
+          </li>
+          <li class="sidebar__trending-item">
+            <span class="sidebar__rank">05</span>
+            <a href="#" class="sidebar__trending-link">China's robotics moonshot</a>
+          </li>
+        </ol>
+      </section>
+
+      <section class="sidebar__section">
+        <h2 class="sidebar__heading">Topics</h2>
+        <div class="sidebar__tags" role="list">
+          <a href="#" class="tag" role="listitem">AI</a>
+          <a href="#" class="tag" role="listitem">Hardware</a>
+          <a href="#" class="tag" role="listitem">Policy</a>
+          <a href="#" class="tag" role="listitem">Privacy</a>
+          <a href="#" class="tag" role="listitem">Open Source</a>
+          <a href="#" class="tag" role="listitem">Startups</a>
+          <a href="#" class="tag" role="listitem">Design</a>
+          <a href="#" class="tag" role="listitem">Climate</a>
+        </div>
+      </section>
+
+      <section class="sidebar__section">
+        <h2 class="sidebar__heading">This Week</h2>
+        <p class="sidebar__note">
+          "We are not building tools anymore. We are building collaborators. That distinction will define the next decade."
+        </p>
+        <cite class="sidebar__cite">— Kai Tanaka, Frontier Lab</cite>
+      </section>
+
+    </aside>
+
+    <!-- ── CENTRE: ARTICLE CARDS GRID ── -->
+    <!--
+      <section> groups related content thematically.
+      Inside here, Flexbox arranges the article cards.
+      Each <article> is a self-contained piece of content —
+      semantically meaningful, could stand alone if extracted.
+    -->
+    <section class="articles" aria-label="Latest articles">
+
+      <!-- FEATURED CARD (spans full width of this column) -->
+      <article class="card card--featured">
+        <div class="card__image card__image--featured" aria-hidden="true">
+          <div class="card__image-inner"></div>
+          <span class="card__category">Featured</span>
+        </div>
+        <div class="card__body">
+          <span class="card__kicker">Machine Learning · 8 min</span>
+          <h2 class="card__title">Transformers Are Eating the World — And We Let Them</h2>
+          <p class="card__excerpt">From autocomplete to autonomous surgery, the same architecture powers it all. Here's the uncomfortable truth about what we optimised for.</p>
+          <div class="card__footer">
+            <span class="card__author">Priya Mehta</span>
+            <a href="#" class="card__link">Read →</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- SECONDARY CARDS ROW -->
+      <div class="cards-row">
+
+        <article class="card card--secondary">
+          <div class="card__image card__image--secondary card__image--blue" aria-hidden="true"></div>
+          <div class="card__body">
+            <span class="card__kicker">Policy · 5 min</span>
+            <h3 class="card__title">Brussels Just Blinked First</h3>
+            <p class="card__excerpt">The EU AI Act's first enforcement actions reveal the limits of regulating something you don't fully understand.</p>
+            <div class="card__footer">
+              <span class="card__author">Marcus Webb</span>
+              <a href="#" class="card__link">Read →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card card--secondary">
+          <div class="card__image card__image--secondary card__image--amber" aria-hidden="true"></div>
+          <div class="card__body">
+            <span class="card__kicker">Hardware · 6 min</span>
+            <h3 class="card__title">The $4 Chip That Could Decentralise AI</h3>
+            <p class="card__excerpt">A tiny RISC-V processor from a Bangalore startup is about to make edge inference cheap enough to disappear into everything.</p>
+            <div class="card__footer">
+              <span class="card__author">Yemi Adeyemi</span>
+              <a href="#" class="card__link">Read →</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- SMALL CARDS ROW -->
+      <div class="cards-row cards-row--three">
+
+        <article class="card card--small">
+          <div class="card__body">
+            <span class="card__kicker">Open Source · 3 min</span>
+            <h3 class="card__title">Llama 4 Is Here. What Now?</h3>
+            <div class="card__footer">
+              <span class="card__author">Dev Team</span>
+              <a href="#" class="card__link">Read →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card card--small">
+          <div class="card__body">
+            <span class="card__kicker">Culture · 4 min</span>
+            <h3 class="card__title">Vibe Coding Is Not a Joke Anymore</h3>
+            <div class="card__footer">
+              <span class="card__author">Sam Rivera</span>
+              <a href="#" class="card__link">Read →</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="card card--small">
+          <div class="card__body">
+            <span class="card__kicker">Startups · 5 min</span>
+            <h3 class="card__title">YC W26: The Class That Bet on Agents</h3>
+            <div class="card__footer">
+              <span class="card__author">Nour Khalil</span>
+              <a href="#" class="card__link">Read →</a>
+            </div>
+          </div>
+        </article>
+
+      </div>
+
+    </section>
+
+    <!-- ── RIGHT: AD / PROMO COLUMN ── -->
+    <aside class="ad-column" aria-label="Promotions">
+
+      <div class="ad-card ad-card--newsletter">
+        <p class="ad-card__eyebrow">Free · Weekly</p>
+        <h3 class="ad-card__title">Signal<br />Briefing</h3>
+        <p class="ad-card__body">250 words. The only tech newsletter that respects your time.</p>
+        <a href="#" class="ad-card__btn">Subscribe →</a>
+      </div>
+
+      <div class="ad-card ad-card--promo">
+        <p class="ad-card__eyebrow">Now Available</p>
+        <h3 class="ad-card__title">The Print Edition</h3>
+        <p class="ad-card__body">Quarterly. No ads. Linen cover. Limited to 2,000 copies.</p>
+        <a href="#" class="ad-card__btn">Order →</a>
+      </div>
+
+      <div class="ad-card ad-card--quote">
+        <blockquote class="ad-card__quote">
+          "The future is already here — it's just not evenly distributed."
+        </blockquote>
+        <cite class="ad-card__cite">William Gibson</cite>
+      </div>
+
+    </aside>
+
+  </main>
+
+  <!-- ░░ SECTION 5: FOOTER ░░ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+      <span class="footer__logo">SIGNAL</span>
+      <p class="footer__copy">© 2026 Signal Media. All editorial content is independent.</p>
+      <nav class="footer__links" aria-label="Footer navigation">
+        <a href="#">About</a>
+        <a href="#">Advertise</a>
+        <a href="#">Privacy</a>
+        <a href="#">RSS</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>
