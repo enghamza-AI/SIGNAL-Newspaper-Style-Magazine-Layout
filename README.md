@@ -2,6 +2,8 @@
 
 Week 1 project from the Diamond Fullstack Roadmap.
 
+https://signal-newspaper-style-magazine-lay.vercel.app/
+
 ## Folder Structure
 
 ```
